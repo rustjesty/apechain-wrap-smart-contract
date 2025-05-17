@@ -41,3 +41,8 @@ jobs:
         run: |
           forge test -vvv
         id: test
+
+      - name: Run Forge coverage
+        run: |
+          forge coverage --no-match-coverage "(script|test|lib|mocks)"
+        id: coverage

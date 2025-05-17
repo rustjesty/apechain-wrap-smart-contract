@@ -1,66 +1,63 @@
-## Foundry
+# Wrapped Native ApeCoin (wnAPE) 🦍 🍌
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+A trustless wrapper contract for native ApeCoin on ApeChain that allows wrapping and unwrapping of native APE tokens.
 
-Foundry consists of:
+## Overview
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+wnAPE (Wrapped Native ApeCoin) is an ERC20-compliant **yield-bearing** token that represents wrapped native APE on ApeChain. Unlike native APE which experiences value changes through ApeChain's automatic yield system, wnAPE functions like a receipt token, representing proportional ownership of the entire APE pool in the contract.
 
-## Documentation
+Instead of directly reflecting yield by changing account balances, wnAPE maintains a fixed supply while its redemption value against APE increases over time. This means the same amount of wnAPE tokens will be worth more APE as the pool accumulates yield. When someone exits wnAPE by unwrapping, they receive their principal APE plus any accumulated APE earnings based on their proportional share.
 
-https://book.getfoundry.sh/
+## Features
+
+- **Wrap APE**: Convert native APE to wnAPE tokens
+- **Unwrap wnAPE**: Convert wnAPE tokens back to native APE
+- **Direct Deposits**: Allows direct wrapping by sending native tokens to the contract
+- **Conversion Utilities**: Helper functions to calculate conversion rates between APE and wnAPE
 
 ## Usage
 
-### Build
+### Wrapping APE
 
-```shell
-$ forge build
+```solidity
+// Method 1: Using the wrap function
+wnAPE.wrap{value: amountToWrap}(amountToWrap);
+
+// Method 2: Simply send APE to the contract
+(bool success,) = wnAPE.call{value: amountToWrap}("");
 ```
 
-### Test
+### Unwrapping wnAPE
 
-```shell
-$ forge test
+```solidity
+// Unwrap wnAPE tokens back to native APE
+wnAPE.unwrap(wnApeCoinAmount);
 ```
 
-### Format
+### Checking Conversion Rates
 
-```shell
-$ forge fmt
+```solidity
+// Get APE amount for a specific wnAPE amount
+uint256 apeAmount = wnAPE.getApeCoinByWnApeCoin(wnApeCoinAmount);
+
+// Get wnAPE amount for a specific APE amount
+uint256 wnApeAmount = wnAPE.getWnApeCoinByApeCoin(apeCoinAmount);
+
+// Get APE per 1 wnAPE token
+uint256 apePerToken = wnAPE.apeCoinPerToken();
+
+// Get wnAPE tokens per 1 APE
+uint256 tokensPerApe = wnAPE.tokensPerApeCoin();
 ```
 
-### Gas Snapshots
+## Technical Details
 
-```shell
-$ forge snapshot
-```
+- Solidity version: 0.8.30
+- License: MIT
+- Dependencies:
+  - Solady: ERC20, FixedPointMathLib, SafeTransferLib
+  - ArbInfo interface for automatic yield configuration
 
-### Anvil
+## License
 
-```shell
-$ anvil
-```
-
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
+This project is licensed under the MIT License.
